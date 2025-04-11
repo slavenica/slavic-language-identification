@@ -657,6 +657,7 @@ if (!caller) {
     # Process command-line arguments
     my $always_show_script = 0;
     my $show_confidence = 0;
+    my $input_file = '';
   #  my $run_tests = 0;
     
     foreach my $arg (@ARGV) {
@@ -673,26 +674,51 @@ if (!caller) {
             print STDERR "Error: Unknown option '$arg'\n\n";
             print_usage();
             exit 1;
+        } elsif ($arg =~ /\.txt$/) {
+            $input_file = $arg;
         } else {
-            print STDERR "Error: Direct text input is not supported.\n";
-            print STDERR "Please pipe text to the script instead.\n\n";
+            print STDERR "Error: Unrecognized argument '$arg'.\n";
+            print STDERR "For file input, use a .txt file.\n\n";
             print_usage();
             exit 1;
         }
     }
     
-    # Check if there's input on STDIN
-    my $has_stdin = -t STDIN ? 0 : 1;
-    if (!$has_stdin) {
-        print STDERR "Error: No input provided via stdin.\n";
-        print STDERR "Please pipe text to the script.\n\n";
-        print_usage();
-        exit 1;
-    }
+    my $text;
     
-    # Read from stdin with UTF-8 encoding
-    binmode(STDIN, ":utf8");
-    my $text = do { local $/; <STDIN> };
+    # Read from file if specified
+    if ($input_file) {
+        if (!-e $input_file) {
+            print STDERR "Error: File '$input_file' does not exist.\n\n";
+            exit 1;
+        }
+        
+        if (!-r $input_file) {
+            print STDERR "Error: Cannot read file '$input_file'.\n\n";
+            exit 1;
+        }
+        
+        open my $fh, '<:utf8', $input_file or do {
+            print STDERR "Error: Could not open file '$input_file': $!\n\n";
+            exit 1;
+        };
+        
+        $text = do { local $/; <$fh> };
+        close $fh;
+    } else {
+        # Check if there's input on STDIN
+        my $has_stdin = -t STDIN ? 0 : 1;
+        if (!$has_stdin) {
+            print STDERR "Error: No input provided via stdin or file.\n";
+            print STDERR "Please pipe text to the script or provide a .txt file.\n\n";
+            print_usage();
+            exit 1;
+        }
+        
+        # Read from stdin with UTF-8 encoding
+        binmode(STDIN, ":utf8");
+        $text = do { local $/; <STDIN> };
+    }
     
     # Skip processing if no text provided
     if (!$text || $text !~ /\S/) {
@@ -710,12 +736,14 @@ if (!caller) {
 
 # Helper function to print usage instructions
 sub print_usage {
-    print "Usage: $0 [options]\n";
-    print "Pipe text to stdin for analysis\n\n";
+    print "Usage: $0 [options] [file.txt]\n";
+    print "Pipe text to stdin or specify a .txt file for analysis\n\n";
     print "Examples:\n";
-    print "  echo \"Привет мир\" | $0\n";
-    print "  echo \"Привет мир\" | $0 -v -s\n";
-    print "  cat text_file.txt | $0\n\n";
+    print "  echo \"Книги - корабли мысли\" | $0\n";
+    print "  echo \"Наші пісні - це наша історія\" | $0 -v -s\n";
+    print "  cat text_file.txt | $0\n";
+    print "  $0 sample.txt\n";
+    print "  $0 -s -v russian_text.txt\n\n";
     print "Options:\n";
     
     print "  -s            Always show script tag even when it's the default\n";
