@@ -81,4 +81,4 @@ perl slavic-language-identification.pl -h
 
 [MIT License](LICENSE)
 
-© 2015 Danslav Slavenskoj
+© 2025 Danslav Slavenskoj
