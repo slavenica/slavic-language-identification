@@ -4,11 +4,44 @@ A Perl script for detecting and identifying Slavic languages from text input, us
 
 ## Features
 
-- Identifies specific Slavic languages including Russian, Ukrainian, Belarusian, Bulgarian, Serbian, Macedonian, Polish, Czech, Slovak, Slovenian, Sorbian, and more
-- Detects Church Slavonic and Old Church Slavonic varieties
-- Recognizes different scripts (Cyrillic, Latin, Glagolitic, Arabic)
+- Identifies specific Slavic languages from text samples
 - Returns BCP47-compatible language tags
 - Provides confidence scores (optional)
+
+## Supported Languages
+
+### East Slavic
+- Russian (ru)
+- Pre-revolutionary Russian (ru-petr1708)
+- Ukrainian (uk)
+- Belarusian (be)
+
+### South Slavic
+- Bulgarian (bg)
+- Macedonian (mk)
+- Serbian (sr)
+- Bosnian (bs) - including Arabic script variant
+
+### West Slavic
+- Polish (pl)
+- Czech (cs)
+- Slovak (sk)
+- Slovenian (sl)
+- Sorbian languages (dsb, hsb)
+- Kashubian (csb)
+
+### Historical
+- Church Slavonic (cu-x-cs)
+- Old Church Slavonic (cu-x-ocs)
+
+### Writing Systems
+- Cyrillic (Cyrl)
+- Latin (Latn)
+- Glagolitic (Glag)
+- Historical Cyrillic (Cyrs)
+- Arabic (Arab)
+
+The script can also identify general Slavic language groups (East, West, South) when a specific language cannot be determined.
 
 ## Usage
 
